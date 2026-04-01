@@ -10,7 +10,7 @@ const supabase = (SUPABASE_URL && SUPABASE_ANON_KEY) ? createClient(SUPABASE_URL
 // ============================================================================
 // Constants & Context
 // ============================================================================
-const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY || "AIzaSyAC5ry79UclPrBPqo-_OIP3EJqhOUAxZmQ";
+const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY || "";
 
 const TAROT_DECK = [
   "愚者","魔術師","女祭司","皇后","皇帝","教皇","戀人","戰車","力量","隱者",
