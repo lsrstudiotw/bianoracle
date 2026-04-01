@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { createClient } from '@supabase/supabase-js';
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { toPng } from 'html-to-image';
 
 // ============================================================================
 // Supabase Configuration
@@ -198,6 +199,36 @@ export default function BianOracle() {
       console.error(e);
       setResult("連線發生問題或額度用盡，請確認網路後再試一次。");
       setLoading(false); setStreaming(false);
+    }
+  };
+
+  const handleDownload = async () => {
+    if (!shareCardRef.current) return;
+    try {
+      const dataUrl = await toPng(shareCardRef.current, { cacheBust: true, pixelRatio: 2 });
+      
+      // Try Web Share API first (for mobile IG/FB)
+      if (navigator.share && navigator.canShare) {
+        const blob = await (await fetch(dataUrl)).blob();
+        const file = new File([blob], 'bian-oracle.png', { type: 'image/png' });
+        if (navigator.canShare({ files: [file] })) {
+          await navigator.share({
+            files: [file],
+            title: '彼岸解惑',
+            text: '這是我在彼岸得到的指引'
+          });
+          return;
+        }
+      }
+
+      // Fallback: regular download
+      const link = document.createElement('a');
+      link.download = `bian-oracle-${Date.now()}.png`;
+      link.href = dataUrl;
+      link.click();
+    } catch (err) {
+      console.error('oops, something went wrong!', err);
+      alert("暫時無法產生圖片，請嘗試截圖保存。");
     }
   };
 
