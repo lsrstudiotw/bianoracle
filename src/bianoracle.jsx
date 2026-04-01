@@ -176,11 +176,13 @@ export default function BianOracle() {
 
   const doReading = async () => {
     setLoading(true); setStreaming(false); setStep(4); setResult("");
+    const birthInfo = `國曆 ${birthYear}年${birthMonth}月${birthDay}日 ${birthHour}`;
+    const cardsInfo = selectedCards.map((ci, i) => `${positions[i]}：${deckSource[ci]}（${orientations[ci]}）`).join("\n");
     const userMsg = `請為我進行【紫微斗數 × 塔羅牌】綜合解讀。\n\n【案主生辰】${birthInfo}\n【抽牌結果】\n${cardsInfo}\n【問題】${question}\n\n請務必充分結合紫微細節與塔羅牌意，針對【問題】提供深度且具體的回覆。`;
     try {
       const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
       const model = genAI.getGenerativeModel({
-        model: "gemini-2.0-flash",
+        model: "gemini-1.5-flash",
         systemInstruction: SYSTEM_PROMPT,
       });
       const response = await model.generateContentStream(userMsg);
