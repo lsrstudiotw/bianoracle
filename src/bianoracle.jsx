@@ -523,7 +523,7 @@ select option{background:#1a1530;color:#e8dcc8}
               <div style={{marginTop:16,padding:"16px",background:"rgba(74,154,232,0.06)",border:"1px solid rgba(74,154,232,0.2)",borderRadius:10}}>
                 <div style={{fontSize:13,color:"#8ab8e8",marginBottom:10,fontWeight:600,textAlign:"center"}}>🧬 人類圖資訊（選填，可大幅提升準確度）</div>
                 <div style={{fontSize:11,color:"#5a7a8a",marginBottom:10,lineHeight:1.6,textAlign:"center"}}>如果您已知自己的類型，請直接選擇；若不確定，可先前往查詢</div>
-                <div style={{display:"flex",gap:8,marginBottom:10}}>
+                <div style={{display:"flex",flexDirection:"column",gap:8,marginBottom:10}}>
                   <select style={{...S.sel,borderColor:"rgba(74,154,232,0.3)"}} value={hdType} onChange={e=>setHdType(e.target.value)}>
                     <option value="">我的人類圖類型</option>
                     <option value="顯示者 Manifestor">顯示者 Manifestor</option>
