@@ -31,50 +31,38 @@ const SYSTEM_PROMPT = `你是「彼岸解惑」的命理大師，融合紫微斗
 
 ## 風格原則
 - 不要說教，要說故事。用案主的命盤和牌面「說故事」，讓他們在故事中看到自己。
+- **深度融合**：必須充分利用紫微斗數呈現的所有細節（如：主星特質、所在宮位、四化引動）與抽出的塔羅牌意涵（正逆位、元素、符號學）根據問題去精準解惑。
+- **針對性解決**：如果案主提問包含特定時間範圍（如：今年、本季、下個月）或特定領域，請務必在解讀中明確針對該時段/領域進行具體分析。
 - 不要泛論，要精準。避免「保持正面心態」這種空話，給出具體到「這週可以做什麼」的建議。
-- 不要冷漠，要溫柔。你是在深夜陪一個需要方向的人聊天，不是在寫報告。
-- 適度使用紫微術語（如「命宮」「遷移宮」），但每個術語後面都要用白話解釋。
-- 塔羅解讀要結合案主的具體問題，不要只是照本宣科念牌義。
 - 回答控制在 800-1200 字。
 
 ## 解讀結構（必須嚴格遵守此順序）
 
 ### 1. 命盤人格素描（150字）
-根據生辰排紫微命盤，描述案主的性格核心。要像在描述一個活生生的人，不是在唸課本。讓案主讀完覺得「天啊，這就是我」。
+根據生辰排紫微命盤，分析案主性格中對應【提問】的核心特質。讓案主讀完覺得「天啊，這就是我」。
 
 ### 2. 塔羅三牌解讀（250字）
 解讀過去/現在/未來三張牌：
-- **過去**：你經歷了什麼，是什麼塑造了現在的你
+- **過去**：是什麼經歷導致了現在的困境或狀態
 - **現在**：你正站在什麼樣的十字路口
-- **未來**：如果順應能量，前方會出現什麼
-每張牌的解讀要結合案主的問題，不要平鋪直敘。
+- **未來**：如果順應當前能量，該問題的最終走向如何
+每張牌的解讀要緊扣【問題】，不要平鋪直敘。
 
-### 3. 命命運交叉點（200字）
-這是整篇解讀的精華。找出紫微命盤的先天定數與塔羅牌面揭示的後天變數之間的「交叉點」——那個讓案主目前卡住的核心原因。用一個洞察點破。
+### 3. 命運交叉點（200字）
+找出紫微命盤的先天定數（如：大限/流年宮位與四化）與塔羅牌面揭示的後天變數之間的「核心交叉點」。點破目前問題的關鍵癥結。
 
 ### 4. 本週行動處方（200字）
 給出 3 個具體、可執行的行動建議。必須具體到「什麼時候」「做什麼」「跟誰」的程度。
-例如：
-- ✅「這週找一個你信任的朋友，把你心裡那個『但是⋯⋯』說出來」
-- ✅「今晚回家後，花 10 分鐘把腦中最大的擔憂寫在紙上，然後摺起來收好」
-- ❌「建議保持正面心態」（這是廢話，禁止出現）
-- ❌「順其自然」（太空泛，禁止出現）
 
 ### 5. 送給你的一句話（50字以內）
-用一句溫暖、有力量的話作為結尾。像是命理師在案主離開前，輕輕說的最後一句話。這句話要讓人想截圖保存。
+用一句溫暖、有力量的話作為結尾。
 
-⚠️【重要指示】必須在整篇解讀的最後，獨立空一行並以「【IG摘要】」為標題，嚴格給出3句話的精華摘要。
-【IG摘要】
-1. （第一句具體建議，限15字以內）
-2. （第二句具體建議，限15字以內）
-3. （一句溫暖有力量的話，限15字以內）
+⚠️【重要指示】必須在整篇解讀的最後，獨立空一行並以「【IG摘要】」為標題，嚴格給出 3 句精華結論（每句限 15 字以內）。這部分將僅用於卡片生成，請確保語法簡潔準確。
 
-## 紫微排盤要點
-- 甲(廉破武陽) 乙(機梁紫陰) 丙(同機昌廉) 丁(陰同機巨) 戊(貪陰右機) 己(武貪梁曲) 庚(陽武陰同) 辛(巨陽曲昌) 壬(梁紫左武) 癸(破巨陰貪)
+## 紫微排盤與塔羅參考
+- 四化：甲(廉破武陽) 乙(機梁紫陰) 丙(同機昌廉) 丁(陰同機巨) 戊(貪陰右機) 己(武貪梁曲) 庚(陽武陰同) 辛(巨陽曲昌) 壬(梁紫左武) 癸(破巨陰貪)
+- 塔羅正逆位與元素（風火水土）需與紫微五行進行呼應分析。`;
 
-## 塔羅解讀
-- 正位＝能量順暢，牌面意義正常發揮
-- 逆位＝能量受阻或需要反思（不等於壞事，是宇宙在提醒你換個角度看）`;
 
 function shuffle(arr) {
   const a = [...arr];
@@ -188,13 +176,11 @@ export default function BianOracle() {
 
   const doReading = async () => {
     setLoading(true); setStreaming(false); setStep(4); setResult("");
-    const birthInfo = `國曆 ${birthYear}年${birthMonth}月${birthDay}日 ${birthHour}`;
-    const cardsInfo = selectedCards.map((ci, i) => `${positions[i]}：${deckSource[ci]}（${orientations[ci]}）`).join("\n");
-    const userMsg = `請為我進行【紫微斗數 × 塔羅牌】雙系統解讀。\n\n【生辰】${birthInfo}\n【抽牌結果】\n${cardsInfo}\n【問題】${question}\n\n請依照解讀結構完整回覆。`;
+    const userMsg = `請為我進行【紫微斗數 × 塔羅牌】綜合解讀。\n\n【案主生辰】${birthInfo}\n【抽牌結果】\n${cardsInfo}\n【問題】${question}\n\n請務必充分結合紫微細節與塔羅牌意，針對【問題】提供深度且具體的回覆。`;
     try {
       const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
       const model = genAI.getGenerativeModel({
-        model: "gemini-2.5-flash",
+        model: "gemini-2.0-flash",
         systemInstruction: SYSTEM_PROMPT,
       });
       const response = await model.generateContentStream(userMsg);
@@ -376,8 +362,8 @@ select option{background:#1a1530;color:#e8dcc8}
             ) : (
               <div style={{ animation: "fadeIn 0.5s ease" }}>
                 <div style={S.res} ref={resultRef}>
-                  <div style={{ whiteSpace: "pre-wrap" }}>
-                    {result}
+                  <div style={{whiteSpace: "pre-wrap"}}>
+                    {result.split("【IG摘要】")[0].trim()}
                     {streaming && <span style={S.cursor} />}
                   </div>
                 </div>
@@ -403,21 +389,20 @@ select option{background:#1a1530;color:#e8dcc8}
         {showShareCard && (
           <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.85)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }} onClick={() => setShowShareCard(false)}>
             <div className="bcard" style={{ background: "#0d111d", border: "1px solid #c9a96e", borderRadius: 16, padding: 32, maxWidth: 360, width: "100%", position: "relative", boxShadow: "0 20px 50px rgba(0,0,0,0.5)" }} onClick={e => e.stopPropagation()} ref={shareCardRef}>
-              <div style={{ textAlign: "center", marginBottom: 24, borderBottom: "1px solid rgba(201,169,110,0.2)", paddingBottom: 16 }}>
-                <div style={{ fontSize: 12, letterSpacing: 4, color: "#8a7a62", marginBottom: 8 }}>彼岸解惑 ─ 十字路口的指引</div>
-                <div style={{ fontSize: 24, fontWeight: 700, color: "#f0d8a0" }}>深夜的行動處方</div>
+              <div style={{textAlign: "center", marginBottom: 24, borderBottom: "1px solid rgba(201,169,110,0.2)", paddingBottom: 16}}>
+                <div style={{fontSize: 12, letterSpacing: 4, color: "#8a7a62", marginBottom: 8}}>彼岸解惑 ─ 十字路口的指引</div>
+                <div style={{fontSize: 24, fontWeight: 700, color: "#f0d8a0"}}>深夜的行動處方</div>
               </div>
-              <div style={{ marginBottom: 24 }}>
-                <div style={{ fontSize: 13, color: "#8a7a62", marginBottom: 12, textAlign: "center" }}>【 本次諮詢精華 】</div>
+              <div style={{marginBottom: 24, textAlign: "center"}}>
+                <div style={{fontSize: 13, color: "#8a7a62", marginBottom: 12}}>【 本次諮詢精華 】</div>
                 {result.includes('【IG摘要】') ? (
-                  result.split('【IG摘要】')[1].trim().split('\n').map((line, idx) => (
-                    <div key={idx} style={{ color: "#e8dcc8", fontSize: 16, marginBottom: 12, lineHeight: 1.6, display: "flex", gap: 10 }}>
-                      <span style={{ color: "#c9a96e" }}>{line.startsWith(idx + 1) ? '' : idx + 1 + '.'}</span>
-                      <span>{line.replace(/^\d+\.\s*/, '')}</span>
+                  result.split('【IG摘要】')[1].trim().split('\n').filter(l=>l.trim()).map((line, idx) => (
+                    <div key={idx} style={{color: "#e8dcc8", fontSize: 16, marginBottom: 12, lineHeight: 1.6}}>
+                      {line.replace(/^\d+\.\s*/, '')}
                     </div>
                   ))
                 ) : (
-                  <div style={{ color: "#e8dcc8", fontSize: 15, lineHeight: 1.6, textAlign: "center" }}>人生沒有標準答案<br />只有你當下的選擇。</div>
+                  <div style={{color: "#e8dcc8", fontSize: 15, lineHeight: 1.6}}>人生沒有標準答案<br />只有你當下的選擇。</div>
                 )}
               </div>
               <div style={{ textAlign: "center", marginTop: 32, borderTop: "1px solid rgba(201,169,110,0.1)", paddingTop: 20 }}>
