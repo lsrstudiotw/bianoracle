@@ -420,33 +420,45 @@ select option{background:#1a1530;color:#e8dcc8}
         )}
 
         {showShareCard && (
-          <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.85)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }} onClick={() => setShowShareCard(false)}>
-            <div className="bcard" style={{ background: "#0d111d", border: "1px solid #c9a96e", borderRadius: 16, padding: 32, maxWidth: 360, width: "100%", position: "relative", boxShadow: "0 20px 50px rgba(0,0,0,0.5)" }} onClick={e => e.stopPropagation()} ref={shareCardRef}>
-              <div style={{textAlign: "center", marginBottom: 24, borderBottom: "1px solid rgba(201,169,110,0.2)", paddingBottom: 16}}>
-                <div style={{fontSize: 12, letterSpacing: 4, color: "#8a7a62", marginBottom: 8}}>彼岸解惑 ─ 十字路口的指引</div>
-                <div style={{fontSize: 24, fontWeight: 700, color: "#f0d8a0"}}>深夜的行動處方</div>
+          <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.9)", zIndex: 100, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 20 }} onClick={() => setShowShareCard(false)}>
+            <div style={{ marginBottom: 20, textAlign: "center" }}>
+              <div style={{ color: "#c9a96e", marginBottom: 8, fontSize: 14 }}>🏮 長按圖片可儲存，或點擊下方按鈕</div>
+            </div>
+            
+            <div className="bcard" style={{ background: "#0a0e1a", border: "1px solid #c9a96e", borderRadius: 16, padding: 32, maxWidth: 360, width: "100%", position: "relative", boxShadow: "0 20px 50px rgba(0,0,0,0.5)" }} onClick={e => e.stopPropagation()} ref={shareCardRef}>
+              <div style={{ textAlign: "center", marginBottom: 24, borderBottom: "1px solid rgba(201,169,110,0.2)", paddingBottom: 16 }}>
+                <div style={{ fontSize: 12, letterSpacing: 4, color: "#8a7a62", marginBottom: 8 }}>彼岸解惑 ─ 十字路口的指引</div>
+                <div style={{ fontSize: 24, fontWeight: 700, color: "#f0d8a0" }}>深夜的行動處方</div>
               </div>
-              <div style={{marginBottom: 24, textAlign: "center"}}>
-                <div style={{fontSize: 13, color: "#8a7a62", marginBottom: 12}}>【 本次諮詢精華 】</div>
+              <div style={{ marginBottom: 24, textAlign: "center" }}>
+                <div style={{ fontSize: 13, color: "#8a7a62", marginBottom: 12 }}>【 本次諮詢精華 】</div>
                 {result.includes('【IG摘要】') ? (
                   result.split('【IG摘要】')[1].trim().split('\n').filter(l=>l.trim()).map((line, idx) => (
-                    <div key={idx} style={{color: "#e8dcc8", fontSize: 16, marginBottom: 12, lineHeight: 1.6}}>
+                    <div key={idx} style={{ color: "#e8dcc8", fontSize: 16, marginBottom: 12, lineHeight: 1.6 }}>
                       {line.replace(/^\d+\.\s*/, '')}
                     </div>
                   ))
                 ) : (
-                  <div style={{color: "#e8dcc8", fontSize: 15, lineHeight: 1.6}}>人生沒有標準答案<br />只有你當下的選擇。</div>
+                  <div style={{ color: "#e8dcc8", fontSize: 15, lineHeight: 1.6 }}>人生沒有標準答案<br />只有你當下的選擇。</div>
                 )}
               </div>
               <div style={{ textAlign: "center", marginTop: 32, borderTop: "1px solid rgba(201,169,110,0.1)", paddingTop: 20 }}>
                 <div style={{ fontSize: 12, color: "#6a6050", marginBottom: 8 }}>掃描尋找你的彼岸</div>
                 <div style={{ display: "inline-block", padding: 8, background: "#fff", borderRadius: 4 }}>
-                  <img src={`https://api.qrserver.com/v1/create-qr-code/?size=80x80&data=${encodeURIComponent('https://bianoracle.vercel.app')}`} alt="QR" style={{ display: "block" }} />
+                  <img src={`https://api.qrserver.com/v1/create-qr-code/?size=80x80&data=${encodeURIComponent(GOOGLE_MAPS_URL)}`} alt="QR" style={{ display: "block" }} />
                 </div>
               </div>
               <div style={{ fontSize: 10, color: "#3a3a4a", textAlign: "center", marginTop: 20 }}>Bian Oracle @ LSR Studio</div>
             </div>
-            <div style={{ position: "absolute", bottom: 40, color: "#fff", fontSize: 14 }}>點擊背景關閉</div>
+
+            <div style={{ marginTop: 24, display: "flex", gap:12 }}>
+              <button style={{ ...S.btn(false), marginTop: 0, padding: "12px 32px", fontSize: 14, width: "auto" }} onClick={(e) => { e.stopPropagation(); handleDownload(); }}>
+                💾 下載 / 分享圖片
+              </button>
+              <button style={{ ...S.rstBtn, marginTop: 0, padding: "12px 32px", fontSize: 14, borderColor: "#c9a96e", color: "#c9a96e" }} onClick={() => setShowShareCard(false)}>
+                關閉
+              </button>
+            </div>
           </div>
         )}
       </div>
