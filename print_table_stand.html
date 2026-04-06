@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>彼岸解惑 - 桌面立牌製作工具</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&display=swap');
+        
+        body {
+            background: #f0f0f0;
+            margin: 0;
+            padding: 40px;
+            font-family: 'Noto Serif TC', serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .controls {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .btn {
+            background: #c9a96e;
+            color: #0a0e1a;
+            border: none;
+            padding: 16px 40px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 18px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            transition: transform 0.2s;
+        }
+        .btn:hover { transform: scale(1.05); background: #f0d8a0; }
+
+        /* A4 立牌海報樣式 */
+        .poster {
+            width: 210mm;
+            height: 297mm;
+            background: #0a0e1a;
+            color: #e8dcc8;
+            padding: 20mm;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            text-align: center;
+            box-shadow: 0 0 40px rgba(0,0,0,0.4);
+            border: 2px solid #d4af37;
+            overflow: hidden;
+            -webkit-print-color-adjust: exact;
+        }
+
+        /* 裝飾背景 */
+        .poster::before {
+            content: "🏮";
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 80px;
+            opacity: 0.2;
+        }
+
+        .poster::after {
+            content: "🎴";
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            font-size: 80px;
+            opacity: 0.2;
+        }
+
+        .brand-header {
+            margin-top: 20px;
+        }
+        .brand-name {
+            font-size: 24px;
+            letter-spacing: 12px;
+            color: #8a7a62;
+            margin-bottom: 10px;
+        }
+        .main-title {
+            font-size: 72px;
+            font-weight: 700;
+            letter-spacing: 20px;
+            background: linear-gradient(135deg, #c9a96e, #f0d8a0, #c9a96e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0;
+            text-shadow: 0 10px 20px rgba(0,0,0,0.5);
+        }
+
+        .slogan {
+            font-size: 22px;
+            color: #8a7a62;
+            margin-top: 20px;
+            letter-spacing: 6px;
+            border-top: 1px solid rgba(201,169,110,0.3);
+            border-bottom: 1px solid rgba(201,169,110,0.3);
+            padding: 15px 40px;
+        }
+
+        /* 活動內容區 */
+        .content-box {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(201,169,110,0.2);
+            border-radius: 20px;
+            padding: 40px;
+            width: 80%;
+            margin: 40px 0;
+        }
+
+        .offer-title {
+            font-size: 32px;
+            color: #f0d8a0;
+            margin-bottom: 40px;
+            font-weight: 600;
+        }
+
+        .steps {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 20px;
+        }
+
+        .step {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .step-num {
+            width: 40px;
+            height: 40px;
+            background: #c9a96e;
+            color: #0a0e1a;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+
+        .step-text {
+            font-size: 18px;
+            line-height: 1.6;
+        }
+
+        .highlight {
+            color: #f0d8a0;
+            font-weight: 700;
+            font-size: 24px;
+        }
+
+        /* QR Code 區域 */
+        .qr-section {
+            margin-bottom: 40px;
+        }
+
+        .qr-wrapper {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            display: inline-block;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .qr-image {
+            width: 180px;
+            height: 180px;
+            display: block;
+        }
+
+        .qr-hint {
+            margin-top: 15px;
+            font-size: 16px;
+            color: #8a7a62;
+            letter-spacing: 2px;
+        }
+
+        .footer-note {
+            font-size: 14px;
+            color: #4a4a5a;
+            margin-bottom: 20px;
+        }
+
+        /* 背景流動效果 (僅預覽) */
+        @keyframes flow {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0); }
+        }
+        .main-title { animation: flow 4s ease-in-out infinite; }
+
+        @media print {
+            body { background: none; padding: 0; }
+            .controls { display: none; }
+            .poster { box-shadow: none; margin: 0; border: none; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="controls">
+    <button class="btn" onclick="window.print()">🖨️ 列印 A4 宣傳立牌</button>
+</div>
+
+<div class="poster">
+    <div class="brand-header">
+        <div class="brand-name">彼岸關東煮</div>
+        <h1 class="main-title">彼岸解惑</h1>
+        <div class="slogan">用美味度眾生 ─ 用命理導航人生</div>
+    </div>
+
+    <div class="content-box">
+        <div class="offer-title">集點換解惑 ─ 消費回饋限定</div>
+        
+        <div class="steps">
+            <div class="step">
+                <div class="step-num">1</div>
+                <div class="step-text">
+                    單次消費<br>滿 <span class="highlight">$200</span>
+                </div>
+            </div>
+            <div style="font-size: 30px; color: #4a4a5a; padding-top: 5px;">→</div>
+            <div class="step">
+                <div class="step-num">2</div>
+                <div class="step-text">
+                    獲取集點卡<br><span class="highlight">蓋章集點</span>
+                </div>
+            </div>
+            <div style="font-size: 30px; color: #4a4a5a; padding-top: 5px;">→</div>
+            <div class="step">
+                <div class="step-num">3</div>
+                <div class="step-text">
+                    集滿 <span class="highlight">6點</span><br>兌換深度解讀
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="qr-section">
+        <div class="qr-wrapper">
+            <img class="qr-image" 
+                 src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https://bianoracle.vercel.app" 
+                 alt="Scan Me">
+        </div>
+        <div class="qr-hint">掃描進入彼岸，尋找你的行動處方</div>
+    </div>
+
+    <div class="footer-note">
+        ※ 每桌限兌換乙次，集滿後請向店主領取專屬兌換碼 ※<br>
+        Bian Oracle @ LSR Studio
+    </div>
+</div>
+
+</body>
+</html>

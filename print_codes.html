@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>彼岸解惑 - 批量列印工具</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&display=swap');
+        
+        body {
+            background: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            font-family: 'Noto Serif TC', serif;
+        }
+
+        /* 控制面板 */
+        .controls {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: #1a1a2e;
+            color: white;
+            padding: 20px;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .controls h2 { margin: 0; font-size: 18px; color: #c9a96e; }
+        
+        .input-area {
+            display: flex;
+            gap: 10px;
+        }
+
+        textarea {
+            flex: 1;
+            height: 60px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid #444;
+            border-radius: 4px;
+            color: white;
+            padding: 8px;
+            font-family: monospace;
+            resize: none;
+        }
+
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .btn {
+            background: #c9a96e;
+            color: #0a0e1a;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.2s;
+        }
+
+        .btn:hover { background: #f0d8a0; }
+        .btn.secondary { background: #444; color: white; }
+
+        /* A4 預覽設定 */
+        .page-container {
+            margin-top: 160px; /* 為控制面板騰出空間 */
+            padding-bottom: 40px;
+        }
+
+        .page {
+            width: 210mm;
+            min-height: 297mm;
+            background: white;
+            margin: 0 auto 20px;
+            padding: 8mm; /* 縮小邊距 */
+            box-sizing: border-box;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr); /* 改為 3 欄 */
+            grid-auto-rows: 54mm; /* 固定高度以適應 A4 (約 5 列) */
+            gap: 4mm;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        /* 兌換碼卡片樣式 */
+        .card {
+            border: 1px solid #d4af37;
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+            background: #0a0e1a;
+            color: #e8dcc8;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            -webkit-print-color-adjust: exact;
+        }
+
+        .header-text { font-size: 10px; color: #8a7a62; letter-spacing: 2px; }
+        .card-title { font-size: 16px; font-weight: 700; color: #c9a96e; margin: 4px 0; }
+
+        .qr-area {
+            background: white;
+            padding: 8px;
+            border-radius: 4px;
+            display: inline-block;
+            margin: 0 auto;
+        }
+
+        .qr-code { display: block; width: 90px; height: 90px; }
+
+        .manual-code {
+            font-size: 14px;
+            letter-spacing: 2px;
+            margin-top: 8px;
+            color: #f0d8a0;
+            font-weight: 600;
+            border-top: 1px solid rgba(201,169,110,0.2);
+            padding-top: 4px;
+        }
+
+        .instruction { font-size: 8px; color: #6a6050; margin-top: 4px; }
+
+        /* 列印模式設定 */
+        @media print {
+            body { background: none; padding: 0; }
+            .controls { display: none; }
+            .page-container { margin-top: 0; }
+            .page { 
+                box-shadow: none; 
+                margin: 0; 
+                width: 210mm;
+                height: 297mm;
+                page-break-after: always;
+            }
+            .card { break-inside: avoid; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="controls">
+    <h2>🏮 彼岸解惑 - 批量印製工具 (3x5 排版)</h2>
+    <div class="input-area">
+        <textarea id="code-input" placeholder="請在此貼上兌換碼（一行一個內容，或直接貼上 CSV 內容）"></textarea>
+        <div class="btn-group">
+            <button class="btn" onclick="generate()">⚡ 產生預覽</button>
+            <button class="btn secondary" onclick="window.print()">🖨️ 開始列印 (PDF)</button>
+        </div>
+    </div>
+    <div style="font-size: 12px; color: #888;">提示：支援貼上 CSV，程式會自動識別 code 欄位。每頁可印 15 組。</div>
+</div>
+
+<div class="page-container" id="output">
+    <!-- 頁面會在此動態生成 -->
+</div>
+
+<script>
+    const baseUrl = "https://bianoracle.vercel.app";
+    const googleMapUrl = "https://www.google.com/maps/search/?api=1&query=台北市信義區吳興街577號";
+
+    function generate() {
+        const input = document.getElementById('code-input').value;
+        const container = document.getElementById('output');
+        container.innerHTML = '';
+
+        // 分割行，並清理空白字元
+        let lines = input.split(/\r?\n/).map(l => l.trim()).filter(l => l !== "");
+        
+        // 處理 CSV 標頭 (如果有的話)
+        if (lines.length > 0 && lines[0].toLowerCase().includes('code')) {
+            lines.shift(); // 移除 header
+        }
+
+        // 每組號碼只取第一個逗號前的部分 (處理 CSV)
+        let codes = lines.map(l => l.split(',')[0].trim());
+
+        if (codes.length === 0) {
+            alert("請先輸入兌換碼！");
+            return;
+        }
+
+        const cardsPerPage = 15;
+        let currentPage;
+
+        codes.forEach((code, index) => {
+            if (index % cardsPerPage === 0) {
+                currentPage = document.createElement('div');
+                currentPage.className = 'page';
+                container.appendChild(currentPage);
+            }
+
+            const fullUrl = `${baseUrl}?code=${code}`;
+            const cardHtml = `
+                <div class="card">
+                    <div>
+                        <div class="header-text">彼岸關東煮 ─ 深夜命理</div>
+                        <div class="card-title">彼岸解惑</div>
+                    </div>
+                    
+                    <div class="qr-area">
+                        <img class="qr-code" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(fullUrl)}" alt="QR ${code}">
+                    </div>
+
+                    <div>
+                        <div class="manual-code">${code}</div>
+                        <div class="instruction">掃描 QR Code 開啟專屬解讀</div>
+                    </div>
+                </div>
+            `;
+            currentPage.innerHTML += cardHtml;
+        });
+    }
+
+    // 預填之前那 10 組作為範例
+    document.getElementById('code-input').value = "CGBDC6\nZGTKRR\nBXD3T2\nCLU72J\n4LE7WC\n54LRF4\nGTPNSG\nJJAQ4W\n4TUZ46\n3MUXYR";
+    generate();
+</script>
+
+</body>
+</html>

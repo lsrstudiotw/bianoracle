@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>彼岸解惑 - 集點卡列印工具 (簡約版)</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&display=swap');
+        
+        body {
+            background: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+            font-family: 'Noto Serif TC', serif;
+        }
+
+        /* 控制面板 */
+        .controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .btn {
+            background: #c9a96e;
+            color: #0a0e1a;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 16px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        .btn:hover { background: #f0d8a0; }
+
+        /* A4 預覽 */
+        .page {
+            width: 210mm;
+            min-height: 297mm;
+            background: white;
+            margin: 0 auto;
+            padding: 10mm;
+            box-sizing: border-box;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-auto-rows: 55mm;
+            gap: 8mm;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+
+        /* 集點卡卡片樣式 */
+        .loyalty-card {
+            border: 1.5px solid #d4af37;
+            border-radius: 12px;
+            padding: 15px;
+            background: #0a0e1a;
+            color: #e8dcc8;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+            -webkit-print-color-adjust: exact;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: center; /* 改為置中 */
+            align-items: center;
+            border-bottom: 1px solid rgba(201,169,110,0.3);
+            padding-bottom: 8px;
+            text-align: center;
+        }
+
+        .brand { font-size: 12px; color: #8a7a62; letter-spacing: 3px; }
+        .card-title { font-size: 18px; font-weight: 700; color: #c9a96e; margin-top: 2px; }
+
+        .rules {
+            font-size: 11px;
+            color: #c9a96e;
+            line-height: 1.4;
+            margin: 12px 0;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        /* 集點圓圈區域 - 淺色系 */
+        .points-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 8px;
+            margin: 10px 0;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+        }
+
+        .point-circle {
+            aspect-ratio: 1;
+            background: #ffffff;
+            border: 1.5px solid #c9a96e;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: #0a0e1a;
+            font-weight: 700;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .point-circle.final {
+            background: #fff9e6;
+            border: 2px solid #d4af37;
+            color: #a8873e;
+        }
+
+        .footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 9px;
+            color: #6a6050;
+        }
+
+        .footer-text { max-width: 68%; line-height: 1.2; }
+        .stamp-area {
+            width: 35px;
+            height: 35px;
+            border: 1px solid rgba(201,169,110,0.4);
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+            font-size: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: #8a7a62;
+        }
+
+        /* 背景微弱紋理 */
+        .loyalty-card::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: radial-gradient(#c9a96e 0.5px, transparent 0.5px);
+            background-size: 15px 15px;
+            opacity: 0.03;
+            pointer-events: none;
+        }
+
+        @media print {
+            body { background: none; padding: 0; }
+            .controls { display: none; }
+            .page { box-shadow: none; margin: 0; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="controls">
+    <button class="btn" onclick="window.print()">🖨️ 列印簡約版集點卡 (A4)</button>
+</div>
+
+<div class="page" id="card-container">
+    <!-- 生成 10 張卡片 -->
+</div>
+
+<script>
+    const container = document.getElementById('card-container');
+    const cardCount = 10;
+
+    for (let i = 0; i < cardCount; i++) {
+        const cardHtml = `
+            <div class="loyalty-card">
+                <div class="card-header">
+                    <div>
+                        <div class="brand">彼岸關東煮 ─ 用美味度眾生</div>
+                        <div class="card-title">解惑集點卡</div>
+                    </div>
+                </div>
+
+                <div class="rules">
+                    單次消費 (低消 $200) 集一點<br>
+                    集滿 6 點兌換「彼岸解惑」乙次
+                </div>
+
+                <div class="points-grid">
+                    <div class="point-circle">1</div>
+                    <div class="point-circle">2</div>
+                    <div class="point-circle">3</div>
+                    <div class="point-circle">4</div>
+                    <div class="point-circle">5</div>
+                    <div class="point-circle final">解</div>
+                </div>
+
+                <div class="footer">
+                    <div class="footer-text">※ 本卡限本人使用，塗改無效。集滿後請向店員領取兌換碼。</div>
+                    <div class="stamp-area">店員<br>確認</div>
+                </div>
+            </div>
+        `;
+        container.innerHTML += cardHtml;
+    }
+</script>
+
+</body>
+</html>
